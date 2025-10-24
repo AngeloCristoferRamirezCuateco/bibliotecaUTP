@@ -1,6 +1,7 @@
-export interface User{
+export interface User {
+  id: string;
   nombre: string;
-  apellido: string;
+  apellidos: string;
   fechaNac: string;
   sexo: string;
   telefono: string;
@@ -9,4 +10,5 @@ export interface User{
   contrasena: string;
   area: string;
   carrera: string;
+  favoritosIds?: string[];
 }

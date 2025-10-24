@@ -1,0 +1,26 @@
+Creación de rama
+git branch nombreRama //creamos la rama
+git branch //vericamos las ramas
+git checkout nombreRama //si no estamos en ella nos pasamos a nuestra rama en la que vamos a trabajar
+
+Subir cambios
+git add . //se suben todos los cambios
+git commit -m "Descripción" //Commit de mensaje descriptivo
+git push origin nombreRama //Envía la rama al repositorio remoto
+
+Ir al fork a Compare & pull request agregar descripción y dar clic en Create pull request
+Solo queda esperara a la revisión
+
+Sincronizar cambios con mi proyecto local
+git remote -v
+git remote add upstream https://github.com/AngeloCristoferRamirezCuateco/bibliotecaUTP.git
+git remote -v
+git checkout main
+git branch
+git fetch upstream
+git rebase upstream/main
+git push origin main
+
+
+Clave API
+AIzaSyBKpilo30buInuz2rU2yfF3BuivDmHQoDw
