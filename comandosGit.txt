@@ -20,7 +20,3 @@ git branch
 git fetch upstream
 git rebase upstream/main
 git push origin main
-
-
-Clave API
-AIzaSyBKpilo30buInuz2rU2yfF3BuivDmHQoDw
