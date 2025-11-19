@@ -144,7 +144,7 @@ export default function ApplyLoanScreen({ navigation, route }: Props) {
             style={styles.dateButton}
             onPress={() => setShowDatePicker(true)}
           >
-            <MaterialIcons name="event" size={24} color="#0d730d" />
+            <MaterialIcons name="event" size={24} color="#00853e" />
             <Text style={styles.dateButtonText}>
               {fechaRecogida.toLocaleDateString('es-ES', {
                 weekday: 'long',
@@ -260,10 +260,10 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#0d730d',
+    borderColor: '#00853e',
   },
   genreText: {
-    color: '#0d730d',
+    color: '#00853e',
     fontSize: 12,
     fontWeight: '600',
   },
@@ -327,14 +327,14 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   diasRestantes: {
-    color: '#0d730d',
+    color: '#00853e',
     fontWeight: 'bold',
   },
   buttonsContainer: {
     marginTop: 20,
   },
   solicitarButton: {
-    backgroundColor: '#0d730d',
+    backgroundColor: '#00853e',
     borderRadius: 12,
     paddingVertical: 16,
     flexDirection: 'row',

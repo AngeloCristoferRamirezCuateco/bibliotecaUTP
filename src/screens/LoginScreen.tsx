@@ -29,19 +29,19 @@ const { width, height } = Dimensions.get('window');
 
 export default function LoginScreen({ navigation }: Props) {
   const [matricula, setMatricula] = useState('');
-  const [contraseña, setContraseña] = useState('');
-  const [mostrarContraseña, setMostrarContraseña] = useState(false);
+  const [contrasena, setContrasena] = useState('');
+  const [mostrarContrasena, setMostrarContrasena] = useState(false);
   
   const { loading, error } = useSelector((state: RootState) => state.auth);
 
   const handleLogin = async () => {
-    if (!matricula || !contraseña) {
+    if (!matricula || !contrasena) {
       Alert.alert('Error', 'Por favor completa todos los campos');
       return;
     }
 
     try {
-      await AuthViewModel.login(matricula, contraseña);
+      await AuthViewModel.login(matricula, contrasena);
       navigation.navigate('Books');
     } catch (error) {
       Alert.alert('Error', 'Credenciales incorrectas');
@@ -109,20 +109,20 @@ export default function LoginScreen({ navigation }: Props) {
                 <View style={styles.passwordContainer}>
                   <TextInput
                     style={styles.passwordInput}
-                    value={contraseña}
-                    onChangeText={setContraseña}
+                    value={contrasena}
+                    onChangeText={setContrasena}
                     placeholder="************"
                     placeholderTextColor="#999"
-                    secureTextEntry={!mostrarContraseña}
+                    secureTextEntry={!mostrarContrasena}
                     returnKeyType="done"
                     onSubmitEditing={handleLogin}
                   />
                   <TouchableOpacity
                     style={styles.eyeButton}
-                    onPress={() => setMostrarContraseña(!mostrarContraseña)}
+                    onPress={() => setMostrarContrasena(!mostrarContrasena)}
                   >
                     <MaterialIcons
-                      name={mostrarContraseña ? 'visibility' : 'visibility-off'}
+                      name={mostrarContrasena ? 'visibility' : 'visibility-off'}
                       size={24}
                       color="#666"
                     />
@@ -167,7 +167,8 @@ const styles = StyleSheet.create({
   overlay: {
     width: width,
     height: height * 0.5, // Misma altura que el backgroundImage
-    backgroundColor: 'rgba(13, 115, 13, 0.5)', // Degradado simulado con opacity
+    backgroundColor: 'rgba(0, 133, 62, 0.5)', // Degradado simulado con opacity
+    // backgroundColor: 'rgba(13, 115, 13, 0.5)', // Degradado simulado con opacity
   },
   contentContainer: {
     flex: 1,
@@ -244,7 +245,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   loginButton: {
-    backgroundColor: '#0d730d',
+    backgroundColor: '#00853e',
     borderRadius: 8,
     padding: 15,
     alignItems: 'center',

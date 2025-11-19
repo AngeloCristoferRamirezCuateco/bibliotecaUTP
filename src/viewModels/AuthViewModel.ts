@@ -3,10 +3,10 @@ import { store } from '../store';
 import { loginStart, loginSuccess, loginFailure, logout } from '../store/slices/authSlice';
 
 export class AuthViewModel {
-  static async login(matricula: string, contraseña: string) {
+  static async login(matricula: string, contrasena: string) {
     try {
       store.dispatch(loginStart());
-      const user = await AuthService.login(matricula, contraseña);
+      const user = await AuthService.login(matricula, contrasena);
       store.dispatch(loginSuccess(user));
       return user;
     } catch (error) {

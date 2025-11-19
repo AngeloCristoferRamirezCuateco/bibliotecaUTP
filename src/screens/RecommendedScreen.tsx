@@ -41,7 +41,6 @@ const navigationIcons: NavigationIcon[] = [
   { name: 'home', label: 'Inicio', route: 'Books' },
   { name: 'recommend', label: 'Recomendados', route: 'Recommended' },
   { name: 'book', label: 'Préstamos', route: 'Loans' },
-  { name: 'credit-card', label: 'Pagos', route: 'Payments' },
   { name: 'favorite', label: 'Favoritos', route: 'Favorites' },
   { name: 'notifications', label: 'Notificaciones', route: 'Notifications' },
   { name: 'person', label: 'Perfil', route: 'Profile' },
@@ -192,7 +191,7 @@ useEffect(() => {
         <MaterialIcons
           name={icon.name}
           size={24}
-          color={isActive ? 'black' : 'white'}
+          color={isActive ? '#00853e' : 'white'}
         />
       </TouchableOpacity>
     );
@@ -201,7 +200,7 @@ useEffect(() => {
   if (loading || loadingBooks) {
     return (
       <View style={[styles.container, styles.centerContent]}>
-        <ActivityIndicator size="large" color="#0d730d" />
+        <ActivityIndicator size="large" color="#00853e" />
         <Text style={styles.loadingText}>Cargando recomendaciones...</Text>
       </View>
     );
@@ -211,7 +210,7 @@ useEffect(() => {
     <View style={styles.container}>
       {/* Header informativo */}
       <View style={styles.headerContainer}>
-        <MaterialIcons name="recommend" size={32} color="#0d730d" />
+        <MaterialIcons name="recommend" size={32} color="#00853e" />
         <View style={styles.headerTextContainer}>
           <Text style={styles.headerTitle}>Libros Recomendados</Text>
           <Text style={styles.headerSubtitle}>
@@ -286,7 +285,7 @@ const styles = StyleSheet.create({
     marginTop: 16,
     borderRadius: 12,
     borderLeftWidth: 4,
-    borderLeftColor: '#0d730d',
+    borderLeftColor: '#00853e',
   },
   headerTextContainer: {
     marginLeft: 12,
@@ -311,7 +310,7 @@ const styles = StyleSheet.create({
   },
   infoText: {
     fontSize: 14,
-    color: '#0d730d',
+    color: '#00853e',
     textAlign: 'center',
     fontWeight: '500',
   },
@@ -375,7 +374,7 @@ const styles = StyleSheet.create({
     marginTop: 6 
   },
   available: { 
-    backgroundColor: '#0d730d' 
+    backgroundColor: '#00853e' 
   },
   notAvailable: { 
     backgroundColor: '#A2A2A2' 
@@ -418,7 +417,7 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   exploreButton: {
-    backgroundColor: '#0d730d',
+    backgroundColor: '#00853e',
     paddingHorizontal: 32,
     paddingVertical: 14,
     borderRadius: 12,
@@ -432,7 +431,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row', 
     justifyContent: 'space-around', 
     alignItems: 'center', 
-    backgroundColor: '#0d730d', 
+    backgroundColor: '#00853e', 
     paddingVertical: 12, 
     paddingHorizontal: 8, 
     position: 'absolute', 
