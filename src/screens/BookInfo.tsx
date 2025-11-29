@@ -15,6 +15,7 @@ import {
     ScrollView,
     Dimensions,
     StatusBar,
+    Alert,
 } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useBookImage } from '../hooks/useBookImage';
@@ -28,7 +29,8 @@ export const BookInformation = () => {
     const route = useRoute<BookInformationRouteProp>();
     // const navigation = useNavigation();
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-    const { item } = route.params;
+    //const { item } = route.params;
+    const { item, isFromAPI } = route.params;
     const [isFavorite, setIsFavorite] = useState(false);
     const [loadingFavorite, setLoadingFavorite] = useState(true);
 
@@ -43,10 +45,19 @@ export const BookInformation = () => {
         item.isbn
     );
 
-    // Verificar si el libro es favorito al cargar
+    // // Verificar si el libro es favorito al cargar
+    // useEffect(() => {
+    //     checkIfFavorite();
+    // }, [userId, item.id]);
+
+    // Verificar si el libro es favorito al cargar (solo si NO es de API)
     useEffect(() => {
-        checkIfFavorite();
-    }, [userId, item.id]);
+        if (!isFromAPI) {
+            checkIfFavorite();
+        } else {
+            setLoadingFavorite(false);
+        }
+    }, [userId, item.id, isFromAPI]);
 
     const checkIfFavorite = async () => {
         if (!userId) {
@@ -66,12 +77,12 @@ export const BookInformation = () => {
 
     const handleSolicitarPrestamo = () => {
         if (!user) {
-            alert('Debes iniciar sesión para solicitar préstamos');
+            Alert.alert('Sesión requerida', 'Debes iniciar sesión para solicitar préstamos');
             return;
         }
 
         if (!item.disponible) {
-            alert('Este libro no está disponible para préstamo');
+            Alert.alert('No disponible', 'Este libro no está disponible para préstamo');
             return;
         }
 
@@ -81,7 +92,7 @@ export const BookInformation = () => {
 
     const toggleFavorite = async () => {
         if (!userId) {
-            alert('Debes iniciar sesión para agregar favoritos');
+            Alert.alert('Sesión requerida', 'Debes iniciar sesión para agregar favoritos');
             return;
         }
 
@@ -90,7 +101,7 @@ export const BookInformation = () => {
             setIsFavorite(newFavoriteState);
         } catch (error) {
             console.error('Error toggling favorito:', error);
-            alert('Error al actualizar favorito');
+            Alert.alert('Error', 'Error al actualizar favorito');
         }
     };
 
@@ -106,6 +117,14 @@ export const BookInformation = () => {
                 >
                     <MaterialIcons name="arrow-back" size={28} color="#fff" />
                 </TouchableOpacity>
+
+                {/* Badge de Google Books si es de API */}
+                {isFromAPI && (
+                    <View style={styles.apiBadge}>
+                        <MaterialIcons name="cloud" size={16} color="#fff" />
+                        <Text style={styles.apiBadgeText}>Google Books</Text>
+                    </View>
+                )}
 
                 <Image
                     source={imageSource}
@@ -128,7 +147,7 @@ export const BookInformation = () => {
                 {/* Autor */}
                 <Text style={styles.bookAuthor}>por {item.autor}</Text>
 
-                {/* Estado de disponibilidad */}
+                {/* Estado de disponibilidad
                 <View style={styles.availabilityContainer}>
                     <View style={[
                         styles.statusBadge,
@@ -150,13 +169,39 @@ export const BookInformation = () => {
                             {item.unidades} {item.unidades === 1 ? 'ejemplar' : 'ejemplares'}
                         </Text>
                     </View>
-                </View>
+                </View> */}
+
+                {/* Estado de disponibilidad - SOLO SI NO ES DE API */}
+                {!isFromAPI && (
+                    <View style={styles.availabilityContainer}>
+                        <View style={[
+                            styles.statusBadge,
+                            item.disponible ? styles.available : styles.notAvailable
+                        ]}>
+                            <MaterialIcons 
+                                name={item.disponible ? "check-circle" : "cancel"} 
+                                size={18} 
+                                color="#fff" 
+                            />
+                            <Text style={styles.statusText}>
+                                {item.disponible ? 'Disponible' : 'No Disponible'}
+                            </Text>
+                        </View>
+                        
+                        <View style={styles.stockInfo}>
+                            <MaterialIcons name="inventory" size={18} color="#666" />
+                            <Text style={styles.stockText}>
+                                {item.unidades} {item.unidades === 1 ? 'ejemplar' : 'ejemplares'}
+                            </Text>
+                        </View>
+                    </View>
+                )}
 
                 {/* Género */}
                 {item.genero && (
                     <View style={styles.infoSection}>
                         <View style={styles.sectionHeader}>
-                            <MaterialIcons name="category" size={20} color="#0d730d" />
+                            <MaterialIcons name="category" size={20} color="#00853e" />
                             <Text style={styles.sectionTitle}>Género</Text>
                         </View>
                         <View style={styles.genreTag}>
@@ -168,7 +213,7 @@ export const BookInformation = () => {
                 {/* Descripción */}
                 <View style={styles.infoSection}>
                     <View style={styles.sectionHeader}>
-                        <MaterialIcons name="description" size={20} color="#0d730d" />
+                        <MaterialIcons name="description" size={20} color="#00853e" />
                         <Text style={styles.sectionTitle}>Descripción del Libro</Text>
                     </View>
                     <Text style={styles.descriptionText}>
@@ -176,11 +221,11 @@ export const BookInformation = () => {
                     </Text>
                 </View>
 
-                {/* Información adicional */}
+                {/* Información adicional
                 {(item.editorial || item.fechaPublicacion) && (
                     <View style={styles.infoSection}>
                         <View style={styles.sectionHeader}>
-                            <MaterialIcons name="info" size={20} color="#0d730d" />
+                            <MaterialIcons name="info" size={20} color="#00853e" />
                             <Text style={styles.sectionTitle}>Información Adicional</Text>
                         </View>
                         <View style={styles.additionalInfo}>
@@ -198,13 +243,55 @@ export const BookInformation = () => {
                             )}
                         </View>
                     </View>
+                )} */}
+
+                {/* Información adicional */}
+                {(item.editorial || item.fechaPublicacion) && (
+                    <View style={styles.infoSection}>
+                        <View style={styles.sectionHeader}>
+                            <MaterialIcons name="info" size={20} color="#00853e" />
+                            <Text style={styles.sectionTitle}>Información Adicional</Text>
+                        </View>
+                        <View style={styles.additionalInfo}>
+                            {item.editorial && (
+                                <View style={styles.infoRow}>
+                                    <Text style={styles.infoLabel}>Editorial:</Text>
+                                    <Text style={styles.infoValue}>{item.editorial}</Text>
+                                </View>
+                            )}
+                            {item.fechaPublicacion && (
+                                <View style={styles.infoRow}>
+                                    <Text style={styles.infoLabel}>Fecha de publicación:</Text>
+                                    <Text style={styles.infoValue}>{item.fechaPublicacion}</Text>
+                                </View>
+                            )}
+                            {item.isbn && (
+                                <View style={styles.infoRow}>
+                                    <Text style={styles.infoLabel}>ISBN:</Text>
+                                    <Text style={styles.infoValue}>{item.isbn}</Text>
+                                </View>
+                            )}
+                        </View>
+                    </View>
                 )}
 
+                {/* Mensaje informativo si es de API */}
+                {isFromAPI && (
+                    <View style={styles.apiInfoBox}>
+                        <MaterialIcons name="info" size={20} color="#2196f3" />
+                        <Text style={styles.apiInfoText}>
+                            Este libro proviene de Google Books.
+                        </Text>
+                    </View>
+                )}
+
+                {/* Espaciado para los botones fijos
+                <View style={{ height: 100 }} /> */}
                 {/* Espaciado para los botones fijos */}
-                <View style={{ height: 100 }} />
+                <View style={{ height: isFromAPI ? 40 : 100 }} />
             </ScrollView>
 
-            {/* Botones fijos en la parte inferior */}
+            {/* Botones fijos en la parte inferior
             <View style={styles.bottomActions}>
                 <TouchableOpacity 
                     style={[
@@ -232,10 +319,45 @@ export const BookInformation = () => {
                     <MaterialIcons 
                         name={isFavorite ? "favorite" : "favorite-border"} 
                         size={28} 
-                        color={isFavorite ? "#e74c3c" : "#0d730d"} 
+                        color={isFavorite ? "#e74c3c" : "#00853e"} 
                     />
                 </TouchableOpacity>
-            </View>
+            </View> */}
+
+            {/* Botones fijos en la parte inferior - SOLO SI NO ES DE API */}
+            {!isFromAPI && (
+                <View style={styles.bottomActions}>
+                    <TouchableOpacity 
+                        style={[
+                            styles.requestButton,
+                            !item.disponible && styles.requestButtonDisabled
+                        ]}
+                        onPress={handleSolicitarPrestamo}
+                        disabled={!item.disponible}
+                    >
+                        <MaterialIcons 
+                            name="book" 
+                            size={22} 
+                            color="#fff" 
+                            style={{ marginRight: 8 }}
+                        />
+                        <Text style={styles.requestButtonText}>
+                            Solicitar Préstamo
+                        </Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity 
+                        style={styles.favoriteButton}
+                        onPress={toggleFavorite}
+                    >
+                        <MaterialIcons 
+                            name={isFavorite ? "favorite" : "favorite-border"} 
+                            size={28} 
+                            color={isFavorite ? "#e74c3c" : "#00853e"} 
+                        />
+                    </TouchableOpacity>
+                </View>
+            )}
         </View>
     );
 };
@@ -310,7 +432,7 @@ const styles = StyleSheet.create({
         gap: 6,
     },
     available: {
-        backgroundColor: '#0d730d',
+        backgroundColor: '#00853e',
     },
     notAvailable: {
         backgroundColor: '#A2A2A2',
@@ -350,10 +472,10 @@ const styles = StyleSheet.create({
         paddingVertical: 8,
         borderRadius: 16,
         borderWidth: 1,
-        borderColor: '#0d730d',
+        borderColor: '#00853e',
     },
     genreText: {
-        color: '#0d730d',
+        color: '#00853e',
         fontSize: 14,
         fontWeight: '600',
     },
@@ -404,7 +526,7 @@ const styles = StyleSheet.create({
     },
     requestButton: {
         flex: 1,
-        backgroundColor: '#0d730d',
+        backgroundColor: '#00853e',
         borderRadius: 12,
         paddingVertical: 14,
         flexDirection: 'row',
@@ -428,6 +550,45 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderWidth: 1,
         borderColor: '#e0e0e0',
+    },
+
+    apiBadge: {
+        position: 'absolute',
+        top: 60,
+        right: 16,
+        backgroundColor: 'rgba(33, 150, 243, 0.9)',
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: 12,
+        paddingVertical: 6,
+        borderRadius: 20,
+        zIndex: 10,
+    },
+    apiBadgeText: {
+        color: '#fff',
+        fontSize: 12,
+        fontWeight: 'bold',
+        marginLeft: 4,
+    },
+    
+    // Nuevo estilo para el mensaje informativo
+    apiInfoBox: {
+        backgroundColor: '#e3f2fd',
+        borderLeftWidth: 4,
+        borderLeftColor: '#2196f3',
+        padding: 16,
+        marginHorizontal: 16,
+        marginTop: 16,
+        borderRadius: 8,
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+    },
+    apiInfoText: {
+        flex: 1,
+        marginLeft: 12,
+        fontSize: 14,
+        color: '#1976d2',
+        lineHeight: 20,
     },
 });
 

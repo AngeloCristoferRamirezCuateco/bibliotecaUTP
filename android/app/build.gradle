@@ -1,3 +1,8 @@
+configurations.all {
+    exclude group: 'com.android.support', module: 'support-compat'
+    exclude group: 'com.android.support', module: 'support-v4'
+}
+
 apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
@@ -83,8 +88,9 @@ android {
         applicationId "com.bibliotecautp"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0.0"
+        versionCode 5 //versionCode 1 interna, versionCode 2 cerrada, versionCode 3 abierta
+        versionName "2.1.0"
+        multiDexEnabled true  // Agrega esta línea si no la tienes
     }
     signingConfigs {
         debug {
@@ -126,4 +132,13 @@ dependencies {
     } else {
         implementation jscFlavor
     }
+
+    // Agrega estas líneas al final de dependencies:
+    implementation 'androidx.core:core:1.13.1'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    
+    // Excluir explícitamente support-compat de react-native-push-notification
+    // implementation('com.dieam.reactnativepushnotification:react-native-push-notification:+') {
+    //     exclude group: 'com.android.support'
+    // }
 }

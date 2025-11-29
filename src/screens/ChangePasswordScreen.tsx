@@ -135,7 +135,7 @@ export default function ChangePasswordScreen({ navigation }: Props) {
       >
         {/* Instrucciones */}
         <View style={styles.instructionsContainer}>
-          <MaterialIcons name="info-outline" size={24} color="#0d730d" />
+          <MaterialIcons name="info-outline" size={24} color="#00853e" />
           <Text style={styles.instructionsText}>
             Por seguridad, primero verifica tu contraseña actual
           </Text>
@@ -228,7 +228,7 @@ export default function ChangePasswordScreen({ navigation }: Props) {
               <MaterialIcons
                 name={newPassword.length >= 6 ? 'check-circle' : 'radio-button-unchecked'}
                 size={18}
-                color={newPassword.length >= 6 ? '#0d730d' : '#ccc'}
+                color={newPassword.length >= 6 ? '#00853e' : '#ccc'}
               />
               <Text style={styles.requirementText}>Mínimo 6 caracteres</Text>
             </View>
@@ -236,7 +236,7 @@ export default function ChangePasswordScreen({ navigation }: Props) {
               <MaterialIcons
                 name={newPassword === confirmPassword && newPassword.length > 0 ? 'check-circle' : 'radio-button-unchecked'}
                 size={18}
-                color={newPassword === confirmPassword && newPassword.length > 0 ? '#0d730d' : '#ccc'}
+                color={newPassword === confirmPassword && newPassword.length > 0 ? '#00853e' : '#ccc'}
               />
               <Text style={styles.requirementText}>Las contraseñas coinciden</Text>
             </View>
@@ -284,7 +284,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#0d730d',
+    backgroundColor: '#00853e',
     paddingHorizontal: 16,
     paddingVertical: 16,
     paddingTop: 40,
@@ -312,7 +312,7 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: 12,
     fontSize: 14,
-    color: '#0d730d',
+    color: '#00853e',
     lineHeight: 20,
   },
   formContainer: {
@@ -374,7 +374,7 @@ const styles = StyleSheet.create({
     color: '#666',
   },
   saveButton: {
-    backgroundColor: '#0d730d',
+    backgroundColor: '#00853e',
     borderRadius: 12,
     paddingVertical: 16,
     flexDirection: 'row',

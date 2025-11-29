@@ -41,7 +41,6 @@ const navigationIcons: NavigationIcon[] = [
     { name: 'home', label: 'Inicio', route: 'Books' },
     { name: 'recommend', label: 'Recomendados', route: 'Recommended' },
     { name: 'book', label: 'Préstamos', route: 'Loans' },
-    { name: 'credit-card', label: 'Pagos', route: 'Payments' },
     { name: 'favorite', label: 'Favoritos', route: 'Favorites' },
     { name: 'notifications', label: 'Notificaciones', route: 'Notifications' },
     { name: 'person', label: 'Perfil', route: 'Profile' },
@@ -151,7 +150,7 @@ export default function LoansScreen({ navigation }: Props) {
                 return {
                     tiempo: `${prestamo.diasRestantes} días`,
                     fecha: fechaEntrega,
-                    color: '#0d730d',
+                    color: '#00853e',
                     texto: 'Para entregar'
                 };
             case 'expirado':
@@ -298,7 +297,7 @@ export default function LoansScreen({ navigation }: Props) {
                 <MaterialIcons
                     name={icon.name}
                     size={24}
-                    color={isActive ? 'black' : 'white'}
+                    color={isActive ? '#00853e' : 'white'}
                 />
             </TouchableOpacity>
         );
@@ -336,7 +335,7 @@ export default function LoansScreen({ navigation }: Props) {
     if (loading) {
         return (
             <View style={[styles.container, styles.centerContent]}>
-                <ActivityIndicator size="large" color="#0d730d" />
+                <ActivityIndicator size="large" color="#00853e" />
                 <Text style={styles.loadingText}>Cargando préstamos...</Text>
             </View>
         );
@@ -467,7 +466,7 @@ const styles = StyleSheet.create({
         borderRadius: 8,
     },
     activeSectionButton: {
-        backgroundColor: '#0d730d',
+        backgroundColor: '#00853e',
     },
     sectionButtonText: {
         fontSize: 12,
@@ -592,7 +591,7 @@ const styles = StyleSheet.create({
         marginBottom: 32,
     },
     exploreButton: {
-        backgroundColor: '#0d730d',
+        backgroundColor: '#00853e',
         paddingHorizontal: 32,
         paddingVertical: 14,
         borderRadius: 12,
@@ -617,7 +616,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-around',
         alignItems: 'center',
-        backgroundColor: '#0d730d',
+        backgroundColor: '#00853e',
         paddingVertical: 12,
         paddingHorizontal: 8,
         position: 'absolute',

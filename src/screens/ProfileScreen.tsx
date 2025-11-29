@@ -1,4 +1,3 @@
-// src/screens/ProfileScreen.tsx
 import React, { useState } from 'react';
 import {
   View,
@@ -13,7 +12,8 @@ import {
 } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/types';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { logout } from '../store/slices/authSlice';
 import { RootState } from '../store';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { AuthViewModel } from '../viewModels/AuthViewModel';
@@ -39,45 +39,45 @@ const navigationIcons: NavigationIcon[] = [
   { name: 'home', label: 'Inicio', route: 'Books' },
   { name: 'recommend', label: 'Recomendados', route: 'Recommended' },
   { name: 'book', label: 'Préstamos', route: 'Loans' },
-  { name: 'credit-card', label: 'Pagos' },
   { name: 'favorite', label: 'Favoritos', route: 'Favorites' },
-  { name: 'notifications', label: 'Notificaciones' },
+  { name: 'notifications', label: 'Notificaciones', route: 'Notifications' },
   { name: 'person', label: 'Perfil', route: 'Profile' },
 ];
 
 export default function ProfileScreen({ navigation }: Props) {
+  const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.auth.user);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   // Calcular edad desde fechaNac
   const calcularEdad = (fechaNac: string): number => {
     if (!fechaNac) return 0;
-    
+
     const hoy = new Date();
     const nacimiento = new Date(fechaNac);
     let edad = hoy.getFullYear() - nacimiento.getFullYear();
     const mes = hoy.getMonth() - nacimiento.getMonth();
-    
+
     if (mes < 0 || (mes === 0 && hoy.getDate() < nacimiento.getDate())) {
       edad--;
     }
-    
+
     return edad;
   };
 
   // Formatear fecha
   const formatearFecha = (fecha: string): string => {
     if (!fecha) return 'No disponible';
-    
+
     const date = new Date(fecha);
     const dia = String(date.getDate()).padStart(2, '0');
     const mes = String(date.getMonth() + 1).padStart(2, '0');
     const año = date.getFullYear();
-    
+
     return `${dia}/${mes}/${año}`;
   };
 
-    const handleLogout = () => {
+  const handleLogout = () => {
     Alert.alert(
       'Cerrar Sesión',
       '¿Estás seguro de que quieres cerrar sesión?',
@@ -89,16 +89,19 @@ export default function ProfileScreen({ navigation }: Props) {
         },
         {
           text: 'Cerrar Sesión',
-          onPress: async () => {
-            try {
-              await AuthViewModel.logout();
-              navigation.reset({
-                index: 0,
-                routes: [{ name: 'Login' }],
-              });
-            } catch (error) {
-              console.error('Error cerrando sesión:', error);
-            }
+          // onPress: async () => {
+          //   try {
+          //     await AuthViewModel.logout();
+          //     navigation.reset({
+          //       index: 0,
+          //       routes: [{ name: 'Login' }],
+          //     });
+          //   } catch (error) {
+          //     console.error('Error cerrando sesión:', error);
+          //   }
+          // },
+          onPress: () => {
+            dispatch(logout());
           },
           style: 'destructive',
         },
@@ -139,15 +142,15 @@ export default function ProfileScreen({ navigation }: Props) {
           isActive && styles.activeNavIcon,
         ]}
         onPress={() => {
-            if (!icon.route || icon.route === 'Profile') return; 
-            navigation.navigate(icon.route as any);
-          
+          if (!icon.route || icon.route === 'Profile') return;
+          navigation.navigate(icon.route as any);
+
         }}
       >
         <MaterialIcons
           name={icon.name}
           size={24}
-          color={isActive ? 'black' : 'white'}
+          color={isActive ? '#00853e' : 'white'}
         />
       </TouchableOpacity>
     );
@@ -185,7 +188,7 @@ export default function ProfileScreen({ navigation }: Props) {
         <View style={styles.headerOverlay}>
           <Text style={styles.headerTitle}>Información de Perfil</Text>
         </View>
-        
+
         {/* Foto de perfil - AHORA DENTRO DEL HEADER */}
         <View style={styles.profileImageContainer}>
           <View style={styles.profileImageWrapper}>
@@ -198,7 +201,7 @@ export default function ProfileScreen({ navigation }: Props) {
         </View>
       </View>
 
-      <ScrollView 
+      <ScrollView
         style={styles.scrollContainer}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
@@ -234,7 +237,7 @@ export default function ProfileScreen({ navigation }: Props) {
           {/* Fecha y Edad */}
           <View style={styles.rowContainer}>
             <View style={[styles.infoSection, styles.halfWidth]}>
-              <Text style={styles.sectionLabel}>Fecha</Text>
+              <Text style={styles.sectionLabel}>Fecha Naci</Text>
               <View style={styles.infoBox}>
                 <Text style={styles.infoText}>{fechaFormateada}</Text>
               </View>
@@ -251,7 +254,7 @@ export default function ProfileScreen({ navigation }: Props) {
           {/* Información adicional */}
           <View style={styles.additionalInfo}>
             <View style={styles.additionalInfoRow}>
-              <MaterialIcons name="phone" size={20} color="#0d730d" />
+              <MaterialIcons name="phone" size={20} color="#00853e" />
               <View style={styles.additionalInfoText}>
                 <Text style={styles.additionalInfoLabel}>Teléfono</Text>
                 <Text style={styles.additionalInfoValue}>{user.telefono}</Text>
@@ -259,7 +262,7 @@ export default function ProfileScreen({ navigation }: Props) {
             </View>
 
             <View style={styles.additionalInfoRow}>
-              <MaterialIcons name="person" size={20} color="#0d730d" />
+              <MaterialIcons name="person" size={20} color="#00853e" />
               <View style={styles.additionalInfoText}>
                 <Text style={styles.additionalInfoLabel}>Sexo</Text>
                 <Text style={styles.additionalInfoValue}>
@@ -269,7 +272,7 @@ export default function ProfileScreen({ navigation }: Props) {
             </View>
 
             <View style={styles.additionalInfoRow}>
-              <MaterialIcons name="school" size={20} color="#0d730d" />
+              <MaterialIcons name="school" size={20} color="#00853e" />
               <View style={styles.additionalInfoText}>
                 <Text style={styles.additionalInfoLabel}>Carrera</Text>
                 <Text style={styles.additionalInfoValue}>{user.carrera}</Text>
@@ -277,7 +280,7 @@ export default function ProfileScreen({ navigation }: Props) {
             </View>
 
             <View style={styles.additionalInfoRow}>
-              <MaterialIcons name="business" size={20} color="#0d730d" />
+              <MaterialIcons name="business" size={20} color="#00853e" />
               <View style={styles.additionalInfoText}>
                 <Text style={styles.additionalInfoLabel}>Área</Text>
                 <Text style={styles.additionalInfoValue}>{user.area}</Text>
@@ -321,12 +324,12 @@ export default function ProfileScreen({ navigation }: Props) {
             <View style={styles.modalHeader}>
               <MaterialIcons name="logout" size={48} color="#e74c3c" />
             </View>
-            
+
             <Text style={styles.modalTitle}>Cerrar Sesión</Text>
             <Text style={styles.modalMessage}>
               ¿Estás seguro de que quieres cerrar sesión?
             </Text>
-            
+
             <View style={styles.modalButtons}>
               <TouchableOpacity
                 style={styles.modalButtonCancel}
@@ -334,7 +337,7 @@ export default function ProfileScreen({ navigation }: Props) {
               >
                 <Text style={styles.modalButtonCancelText}>Cancelar</Text>
               </TouchableOpacity>
-              
+
               <TouchableOpacity
                 style={styles.modalButtonConfirm}
                 onPress={confirmLogout}
@@ -374,7 +377,7 @@ const styles = StyleSheet.create({
   },
   headerOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(13, 115, 13, 0.7)',
+    backgroundColor: 'rgba(0, 133, 62, 0.7)',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -489,7 +492,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   changePasswordButton: {
-    backgroundColor: '#0d730d',
+    backgroundColor: '#00853e',
     marginHorizontal: 16,
     borderRadius: 12,
     paddingVertical: 16,
@@ -536,7 +539,7 @@ const styles = StyleSheet.create({
   },
   retryButton: {
     marginTop: 24,
-    backgroundColor: '#0d730d',
+    backgroundColor: '#00853e',
     paddingHorizontal: 32,
     paddingVertical: 12,
     borderRadius: 8,
@@ -550,7 +553,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
-    backgroundColor: '#0d730d',
+    backgroundColor: '#00853e',
     paddingVertical: 12,
     paddingHorizontal: 8,
     position: 'absolute',
@@ -566,7 +569,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   // Estilos del Modal
-    modalOverlay: {
+  modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
