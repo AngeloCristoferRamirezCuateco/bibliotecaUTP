@@ -88,8 +88,8 @@ android {
         applicationId "com.bibliotecautp"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 5 //versionCode 1 interna, versionCode 2 cerrada, versionCode 3 abierta
-        versionName "2.1.0"
+        versionCode 6 //versionCode 1 interna, versionCode 2 cerrada, versionCode 3 abierta
+        versionName "2.2.0"
         multiDexEnabled true  // Agrega esta línea si no la tienes
     }
     signingConfigs {
