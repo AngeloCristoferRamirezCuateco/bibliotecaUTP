@@ -109,24 +109,30 @@ class NotificationsServiceClass {
     // Crear notificación en Firestore
     async crearNotificacion(data: NotificationData): Promise<string> {
         try {
-            const notificacion: Omit<Notification, 'id'> = {
+            console.log('[NOTIF-SERVICE] Creando notificación en Firestore...');
+            console.log('[NOTIF-SERVICE] Datos:', JSON.stringify(data, null, 2));
+            
+            const notificacion = {
                 userId: data.userId,
                 tipo: data.tipo,
                 titulo: data.titulo,
                 mensaje: data.mensaje,
                 leida: false,
-                fechaCreacion: new Date(),
-                libroId: data.libroId,
-                libroNombre: data.libroNombre,
-                libroImagen: data.libroImagen,
-                libroImagenURL: data.libroImagenURL,
-                prestamoId: data.prestamoId,
-                diasRestantes: data.diasRestantes,
+                fechaCreacion: firestore.Timestamp.now(),
+                libroId: data.libroId || null,
+                libroNombre: data.libroNombre || null,
+                libroImagen: data.libroImagen || null,
+                libroImagenURL: data.libroImagenURL || null,
+                prestamoId: data.prestamoId || null,
+                diasRestantes: data.diasRestantes || null,
             };
 
+            console.log('[NOTIF-SERVICE] Guardando en Firestore...');
             const docRef = await this.notificationsCollection.add(notificacion);
+            console.log('[NOTIF-SERVICE] Notificación guardada con ID:', docRef.id);
             
-            // Mostrar notificación local
+            // Mostrar notificación local (PUSH)
+            console.log('[NOTIF-SERVICE] Mostrando notificación push local...');
             this.showLocalNotification(data.titulo, data.mensaje, {
                 libroImagenURL: data.libroImagenURL,
                 libroNombre: data.libroNombre,
@@ -136,7 +142,8 @@ class NotificationsServiceClass {
 
             return docRef.id;
         } catch (error) {
-            console.error('Error creando notificación:', error);
+            console.error('[NOTIF-SERVICE] Error creando notificación:', error);
+            console.error('[NOTIF-SERVICE] Stack:', (error as Error).stack);
             throw error;
         }
     }
@@ -144,18 +151,58 @@ class NotificationsServiceClass {
     // Obtener notificaciones del usuario
     async getNotificacionesUsuario(userId: string): Promise<Notification[]> {
         try {
+            console.log('getNotificacionesUsuario llamado con userId:', userId);
+            
             const snapshot = await this.notificationsCollection
                 .where('userId', '==', userId)
                 .orderBy('fechaCreacion', 'desc')
                 .get();
 
-            return snapshot.docs.map(doc => ({
-                id: doc.id,
-                ...(doc.data() as Omit<Notification, 'id'>),
-                fechaCreacion: doc.data().fechaCreacion?.toDate() || new Date(),
-            }));
+            console.log('Documentos encontrados:', snapshot.size);
+            
+            if (snapshot.empty) {
+                console.log('No se encontraron notificaciones para userId:', userId);
+                return [];
+            }
+
+            const notifications = snapshot.docs.map(doc => {
+                const data = doc.data();
+                console.log('Documento:', doc.id, data);
+                
+                // Convertir fechaCreacion de manera segura
+                let fechaCreacion = new Date();
+                if (data.fechaCreacion) {
+                    if (typeof data.fechaCreacion.toDate === 'function') {
+                        fechaCreacion = data.fechaCreacion.toDate();
+                    } else if (data.fechaCreacion instanceof Date) {
+                        fechaCreacion = data.fechaCreacion;
+                    } else if (typeof data.fechaCreacion === 'number') {
+                        fechaCreacion = new Date(data.fechaCreacion);
+                    }
+                }
+                
+                return {
+                    id: doc.id,
+                    userId: data.userId || '',
+                    tipo: data.tipo || 'general',
+                    titulo: data.titulo || '',
+                    mensaje: data.mensaje || '',
+                    leida: data.leida || false,
+                    fechaCreacion: fechaCreacion,
+                    libroId: data.libroId || undefined,
+                    libroNombre: data.libroNombre || undefined,
+                    libroImagen: data.libroImagen || undefined,
+                    libroImagenURL: data.libroImagenURL || undefined,
+                    prestamoId: data.prestamoId || undefined,
+                    diasRestantes: data.diasRestantes || undefined,
+                } as Notification;
+            });
+            
+            console.log('Notificaciones procesadas:', notifications.length);
+            return notifications;
         } catch (error) {
             console.error('Error obteniendo notificaciones:', error);
+            console.error('Error completo:', JSON.stringify(error, null, 2));
             throw error;
         }
     }

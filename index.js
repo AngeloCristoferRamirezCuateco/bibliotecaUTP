@@ -26,20 +26,52 @@ const BackgroundFetchHeadlessTask = async (event) => {
     const isTimeout = event.timeout;
 
     if (isTimeout) {
-        console.log('[BackgroundFetch] ⏱️ Headless TIMEOUT:', taskId);
+        console.log('[BackgroundFetch] Headless TIMEOUT:', taskId);
         BackgroundFetch.finish(taskId);
         return;
     }
 
-    console.log('[BackgroundFetch] 🚀 Headless event received:', taskId);
+    console.log('[BackgroundFetch] Headless event received:', taskId);
 
     try {
-        // Importar dinámicamente el servicio
-        // Nota: Esto es una solución simple para evitar problemas de importación
-        await verificarPrestamosHeadless();
-        console.log('[BackgroundFetch] ✅ Headless completado');
+        // Importar y ejecutar verificación
+        const firestore = require('@react-native-firebase/firestore').default;
+
+        const hoy = new Date();
+        hoy.setHours(0, 0, 0, 0);
+
+        // Obtener préstamos activos
+        const snapshot = await firestore()
+            .collection('prestamos')
+            .where('activo', '==', true)
+            .get();
+
+        console.log(`[Headless] ${snapshot.size} préstamos activos encontrados`);
+
+        for (const doc of snapshot.docs) {
+            const data = doc.data();
+            const fechaEntrega = data.fechaEntrega?.toDate();
+
+            if (!fechaEntrega) continue;
+
+            const fechaEntregaSinHora = new Date(fechaEntrega);
+            fechaEntregaSinHora.setHours(0, 0, 0, 0);
+
+            const diferencia = fechaEntregaSinHora.getTime() - hoy.getTime();
+            const diasRestantes = Math.ceil(diferencia / (1000 * 60 * 60 * 24));
+
+            // Actualizar días restantes
+            await firestore()
+                .collection('prestamos')
+                .doc(doc.id)
+                .update({ diasRestantes });
+
+            console.log(`[Headless] Préstamo ${doc.id}: ${diasRestantes} días restantes`);
+        }
+
+        console.log('[BackgroundFetch] Headless completado');
     } catch (error) {
-        console.error('[BackgroundFetch] ❌ Headless error:', error);
+        console.error('[BackgroundFetch] Headless error:', error);
     }
 
     BackgroundFetch.finish(taskId);
@@ -58,7 +90,7 @@ async function verificarPrestamosHeadless() {
             .where('estado', '==', 'activo')
             .get();
 
-        console.log(`[Headless] 📚 ${snapshot.size} préstamos activos encontrados`);
+        console.log(`[Headless] ${snapshot.size} préstamos activos encontrados`);
 
         for (const doc of snapshot.docs) {
             const data = doc.data();
@@ -89,7 +121,7 @@ async function verificarPrestamosHeadless() {
                     });
             }
 
-            console.log(`[Headless] 📖 Préstamo ${doc.id}: ${diasRestantes} días restantes`);
+            console.log(`[Headless] Préstamo ${doc.id}: ${diasRestantes} días restantes`);
         }
     } catch (error) {
         console.error('[Headless] Error verificando préstamos:', error);
@@ -100,7 +132,7 @@ async function verificarPrestamosHeadless() {
 // HANDLER DE NOTIFICACIONES EN SEGUNDO PLANO
 // ============================================
 messaging().setBackgroundMessageHandler(async remoteMessage => {
-    console.log('[FCM] 📩 Mensaje en segundo plano:', remoteMessage);
+    console.log('[FCM] Mensaje en segundo plano:', remoteMessage);
 });
 
 // ============================================
